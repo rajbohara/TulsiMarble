@@ -1,10 +1,31 @@
-import React from 'react'
-import { patti } from '../assets/assets'
-import { useNavigate } from 'react-router-dom';
+import React, {  useEffect, useState } from 'react'
 
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import {toast} from 'react-toastify'
 
 function Home() {
     const navigate = useNavigate();
+  const [patti, setPatti] = useState([])
+    const backendURL = 'http://localhost:3000';
+
+   const fetchInventory = async () => {
+      try {
+        const { data } = await axios.get(`${backendURL}/admin/inventory`);
+        if (data.success) {
+          setPatti(data.patti);
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        toast.error("Error fetching inventory.");
+        console.error(error);
+      }
+    }
+
+  useEffect(() => {
+    fetchInventory();
+  }, []);
 
   return (
     <>
@@ -33,10 +54,10 @@ function Home() {
     <div className='flex'><h1 className='text-3xl text-blue-900 mx-2 my-3 underline'>Top Selling</h1><h1 className='text-3xl my-3 text-blue-900'>:</h1></div>
     <div className='flex flex-wrap justify-center gap-4'>
      { patti.slice(0,10).map((item,index)=>(
-        <div  onClick={() => navigate(`/${item._id}`)}  className='max-w-80 min-w-40 shadow-sm  hover:shadow-lg' >
+        <div  key={item._id} onClick={() => navigate(`/${item._id}`)}  className='max-w-80 min-w-40 shadow-sm  hover:shadow-lg' >
             <img className='w-11/12 h-5/6 p-5 mx-auto object-cover rounded-3xl' src={item.image} alt="" />
             <p className='text-2xl text-blue-900 text-center '>{item.name}</p>
-            <p  className=' text-blue-900 text-center'>{item.size}</p>
+            <p  className=' text-blue-900 text-center'>Size: {item.size}</p>
         </div>
       ))}
     </div>
