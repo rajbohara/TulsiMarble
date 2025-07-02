@@ -107,7 +107,17 @@ app.get('/myorders', async (req, res) => {
     return res.status(400).json({ success: false, message: "userid is required" });
   }
   try {
-    const orders = await Order.find({ userid });
+    const orders = await Order.find({ userid }).populate('pattid') // pattid will be the full patti object
+    res.json({ success: true, orders });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Server error", error: err.message });
+  }
+});
+
+app.get('/admin/allorders', async (req, res) => {
+  
+  try {
+    const orders = await Order.find({}).populate('pattid') // pattid will be the full patti object
     res.json({ success: true, orders });
   } catch (err) {
     res.status(500).json({ success: false, message: "Server error", error: err.message });

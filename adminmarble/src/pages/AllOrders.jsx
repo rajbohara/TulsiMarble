@@ -1,34 +1,26 @@
-import { useAuth } from "@clerk/clerk-react";
+
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useUser } from '@clerk/clerk-react';
+
 
 function MyOrders() {  
-  const { user, isLoaded } = useUser();
-  const { getToken } = useAuth();
+  
   const backendURL = 'http://localhost:3000';
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (isLoaded && user) {
+    if (1) {
       fetchOrders();
     }
-  }, [isLoaded, user]);
+  }, []);
 
   const fetchOrders = async () => {
-    if (!user) return;
+   
     setLoading(true);
-    setError(null);
-    const token = await getToken();
     try {
-      const response = await axios.get(`${backendURL}/myorders`, {
-        params: { userid: user.id },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(`${backendURL}/admin/allorders`);
 
       if(response.data.success){
         setOrders(response.data.orders);
@@ -41,7 +33,7 @@ function MyOrders() {
   };
 
   return (
-    <div>
+    <div className='pt-10'>
       <p className='text-3xl text-blue-900 mx-2 my-3 underline'> All Orders - </p>
       {loading && <p>Loading orders...</p>}
       {error && <p style={{color: 'red'}}>{error}</p>}
