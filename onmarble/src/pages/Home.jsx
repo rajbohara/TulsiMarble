@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {toast} from 'react-toastify'
 
+
 function Home() {
     const navigate = useNavigate();
   const [patti, setPatti] = useState([])
@@ -29,6 +30,7 @@ function Home() {
 
   return (
     <>
+      
      <div className='bg-blue-50 h-30 flex items-center py-10 pt-20 px-56 justify-between'>
       <div className='h-28'>
         <img className='h-24' src="/welcomeicon.png" alt="welcome" />
@@ -51,6 +53,7 @@ function Home() {
         <p className='text-center font-medium  text-blue-950 py-1'> Other Items </p>
       </div>
     </div>
+    
     <div className='flex'><h1 className='text-3xl text-blue-900 mx-2 my-3 underline'>Top Selling</h1><h1 className='text-3xl my-3 text-blue-900'>:</h1></div>
     <div className='flex flex-wrap justify-center gap-4'>
      { patti.slice(0,10).map((item,index)=>(

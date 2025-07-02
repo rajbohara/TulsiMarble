@@ -5,12 +5,27 @@ const port = 3000;
 const uri = "mongodb+srv://iamwhole:12345@cluster0.fc0qg.mongodb.net";
 import mongoose from "mongoose";
 import upload from './upload.js'; // multer with cloudinary
+import dotenv from 'dotenv';
+import { ClerkExpressWithAuth } from '@clerk/clerk-sdk-node';
+import requireAuth from './clerkAuth.js';
+import User from './models/userModel.js';
+import Order from './models/orderModel.js';
 
+
+dotenv.config();
+app.use(ClerkExpressWithAuth());
 const connectDB = async () => {
     mongoose.connection.on('connected', () => console.log("database connected"));
     await mongoose.connect(`${uri}/Marble`);
 };
 connectDB();
+
+
+app.use(cors({
+  origin: 'http://localhost:3001', // Your frontend origin
+  credentials: true, // Allow cookies to be sent
+}));
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -86,7 +101,20 @@ app.get('/admin/inventory', async (req, res) => {
 });
 
 
-app.get('/selectedpatti/:_id', async (req, res) => {
+app.get('/myorders', async (req, res) => {
+  const { userid } = req.query;
+  if (!userid) {
+    return res.status(400).json({ success: false, message: "userid is required" });
+  }
+  try {
+    const orders = await Order.find({ userid });
+    res.json({ success: true, orders });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Server error", error: err.message });
+  }
+});
+
+app.get('/selectedpatti/:_id', requireAuth, async (req, res) => {
      console.log(" route hit to get selected patti");
      const { _id } = req.params;
      const { default: pattiModel } = await import('./models/pattiModel.js');
@@ -101,4 +129,54 @@ app.get('/selectedpatti/:_id', async (req, res) => {
     }
 });
 
+app.post('/order', requireAuth, async (req, res) => {
+     console.log(" route hit to get order");
+     const { pattid, quantity, userid, phone } = req.body;
+       if (!pattid || !userid || !quantity || !phone) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
+
+    
+    try {
+         const newOrder = new Order({ pattid, quantity, userid, phone });
+         const savedOrder = await newOrder.save();
+
+         res.status(200).json({success:true, savedOrder });
+    } catch (error) {
+        console.error("Error getting patti:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+// This should match the webhook endpoint you set in Clerk dashboard
+app.post('/clerk', async (req, res) => {
+  const event = req.body;
+
+  if (event.type === 'user.created') {
+    const { id, phone_numbers } = event.data;
+    const phone = phone_numbers?.[0]?.phone_number || null;
+
+    // Create user in your DB if not exists
+    await User.findOneAndUpdate(
+      { clerkUserId: id },
+      { $setOnInsert: { clerkUserId: id, phone } },
+      { upsert: true, new: true }
+    );
+  }
+
+  res.status(200).json({ success: true });
+});
+
+
 app.listen(port, () => console.log("server started", port));
+
+app.use((err, req, res, next) => {
+  if (err?.message === 'Unauthenticated') {
+    console.warn('Caught Clerk unauthenticated error');
+    return res.status(401).json({ success: false, message: "Unauthorized" });
+  }
+
+  // Handle other errors
+  console.error("Unhandled backend error:", err);
+  res.status(500).json({ success: false, message: "Internal Server Error" });
+});
