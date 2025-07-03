@@ -66,7 +66,7 @@ function Pattidetails() {
   const fetchselected = async () => {
     try {
       console.log("selected lara")
-      const { data } = await axios.get(`${backendURL}/selectedpatti/${_id}`);
+      const { data } = await axios.get(`${backendURL}/admin/selectedpatti/${_id}`);
 
       if (data.success) {
         setSelectedpatti(data.selectedpatti);

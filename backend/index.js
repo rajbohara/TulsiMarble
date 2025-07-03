@@ -20,11 +20,8 @@ const connectDB = async () => {
 };
 connectDB();
 
+app.use(cors());
 
-app.use(cors({
-  origin: 'http://localhost:3001', // Your frontend origin
-  credentials: true, // Allow cookies to be sent
-}));
 
 
 app.use(express.urlencoded({ extended: true }));
@@ -125,6 +122,21 @@ app.get('/admin/allorders', async (req, res) => {
 });
 
 app.get('/selectedpatti/:_id', requireAuth, async (req, res) => {
+     console.log(" route hit to get selected patti");
+     const { _id } = req.params;
+     const { default: pattiModel } = await import('./models/pattiModel.js');
+    
+    try {
+         const selectedpatti = await pattiModel.findOne({ _id: _id });
+
+         res.status(200).json({success:true, selectedpatti });
+    } catch (error) {
+        console.error("Error getting patti:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+app.get('/admin/selectedpatti/:_id', async (req, res) => {
      console.log(" route hit to get selected patti");
      const { _id } = req.params;
      const { default: pattiModel } = await import('./models/pattiModel.js');
