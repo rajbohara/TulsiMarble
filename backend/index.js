@@ -84,6 +84,93 @@ app.post('/admin/editpatti/:_id', upload.single('image'), async (req, res) => {
     }
 });
 
+app.get('/admin/deleteadditionalinfo/:_id', async (req, res) => {
+     console.log("delete additional route hit ");
+     const { default: AdditionalPatti } = await import('./models/additionalpattiModel.js');
+      const { _id } = req.params;
+       
+       
+    try {
+        
+        const deleted = await AdditionalPatti.findOneAndDelete(_id);
+
+        res.status(201).json({success: true, message: "Additional info deleted successfully", deleted });
+    } catch (error) {
+        console.error("Error adding patti:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+
+app.get('/admin/deletepatti/:_id', async (req, res) => {
+     console.log("delete route hit ");
+     const { default: pattiModel } = await import('./models/pattiModel.js');
+      const { _id } = req.params;
+    try {
+        
+        const deleted = await pattiModel.findOneAndDelete(_id);
+
+        res.status(201).json({success: true, message: "deleted successfully", deleted });
+    } catch (error) {
+        console.error("Error adding patti:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+app.post('/admin/addpattiimages/:_id', upload.array('images'), async (req, res) => {
+  console.log("additional route hit ");
+  const { default: AdditionalPatti } = await import('./models/additionalpattiModel.js');
+  const { _id } = req.params;
+  const pattid = _id; // Assuming _id is the patti ID to which these images belong
+  // req.files is an array of files
+  const images = req.files ? req.files.map(file => file.path) : [];
+
+  try {
+    const { additionalInfo } = req.body;
+    const updateddata = { additionalInfo, pattid };
+    if (images.length > 0) updateddata.images = images;
+
+    // Spread updateddata, not nest it
+    const newAdditionalPatti = new AdditionalPatti({
+      ...updateddata
+    });
+
+    const savedAdditionalPatti = await newAdditionalPatti.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Additional patti images added successfully",
+      additionalPatti: savedAdditionalPatti
+    });
+  } catch (error) {
+    console.error("Error adding additional patti images:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error adding additional patti images"
+    });
+  }
+});
+
+
+app.get('/additionalinfo/:_id', async (req, res) => {
+  console.log("additional getting route hit ");
+  const { default: AdditionalPatti } = await import('./models/additionalpattiModel.js');
+  const { _id } = req.params;
+  const pattid = _id; // Assuming _id is the patti ID to which these images belong
+  // req.files is an array of files
+ 
+  try {
+    const additionalPatti = await AdditionalPatti.findOne({ pattid });
+    // Spread updateddata, not nest it
+   res.status(200).json({success:true, additionalPatti });
+  } catch (error) {
+    console.error("Error gettingadditional patti images:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting additional patti images"
+    });
+  }
+});
+
 app.get('/admin/inventory', async (req, res) => {
      console.log(" route hit to get inventory");
      const { default: pattiModel } = await import('./models/pattiModel.js');
@@ -157,10 +244,10 @@ app.post('/order', requireAuth, async (req, res) => {
        if (!pattid || !userid || !quantity || !phone) {
             return res.status(400).json({ message: "All fields are required" });
         }
-
+   const status ='';
     
     try {
-         const newOrder = new Order({ pattid, quantity, userid, phone });
+         const newOrder = new Order({ pattid, quantity, userid, phone, status });
          const savedOrder = await newOrder.save();
 
          res.status(200).json({success:true, savedOrder });
@@ -170,6 +257,19 @@ app.post('/order', requireAuth, async (req, res) => {
     }
 });
 
+app.put('/admin/orderstatus/:orderId', async (req, res) => {
+   const { orderId } = req.params;
+   const { status } = req.body; // status can be 'confirmed', 'completed', 'cancelled'
+  if (!orderId) {
+    return res.status(400).json({ success: false, message: "orderId is required" });
+  }
+  try {
+    const order = await Order.findByIdAndUpdate(orderId, { status }, { new: true }) 
+    res.json({ success: true, order });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Server error", error: err.message });
+  }
+});
 // This should match the webhook endpoint you set in Clerk dashboard
 app.post('/clerk', async (req, res) => {
   const event = req.body;

@@ -50,29 +50,50 @@ function MyOrders() {
           <li>No orders found.</li>
         ) : (
           [...orders].reverse().map(order => (
-            <li key={order._id} style={{ marginBottom: '2em', border: '1px solid #ccc', padding: '1em', borderRadius: '6px' }}>
+            <li className="relative" key={order._id} style={{ marginBottom: '2em', border: '1px solid #ccc', padding: '1em', borderRadius: '6px' }}>
               <div>
-                <strong>Order ID:</strong> {order._id}<br/>
+                
                 <strong>Quantity:</strong> {order.quantity}<br/>
-                <strong>Phone:</strong> {order.phone}<br/>
+               
                 <strong>Created At:</strong> {new Date(order.createdAt).toLocaleString()}<br/>
               </div>
               {order.pattid ? (
                 <div style={{marginTop: '1em', background:'#f9f9f9', padding: '1em', borderRadius: '4px'}}>
                   <strong>Patti Info:</strong><br/>
-                  <strong>Name:</strong> {order.pattid.name}<br/>
-                  <strong>Size:</strong> {order.pattid.size}<br/>
-                  <strong>Rate:</strong> {order.pattid.rate}<br/>
-                  <strong>Patti Id:</strong> {order.pattid._id}<br/>
-                  <strong>Available Quantity:</strong> {order.pattid.quantity}<br/>
+                  <strong className="ml-2">Name:</strong> {order.pattid.name}<br/>
+                  <strong className="ml-2">Size:</strong> {order.pattid.size}<br/>
+                  <strong className="ml-2">Rate:</strong> {order.pattid.rate}<br/>
+                  <strong className="ml-2">Patti Id:</strong> {order.pattid._id}<br/>
+                 <div className="ml-2">
                   {order.pattid.image && (
                     <img src={order.pattid.image} alt={order.pattid.name} width={100} style={{marginTop: '0.5em'}} />
                   )}
+                  </div>
                 </div>
               ) : (
                 <div style={{color:'red'}}>Patti info missing</div>
               )}
+              {!order.status ? (
+                   <div className='absolute top-2 flex flex-col right-5 gap-2 '>
+                 <button className=' text-black border border-black h-8 w-28  hover: cursor-default'>Requested</button>
+                </div>
+                ):
+                <div className='absolute top-2 flex flex-col right-5 gap-2 '>
+                  {order.status === 'confirmed' && <div className=' flex flex-col gap-2 '> 
+                    <button className=' text-black border border-black h-8 w-28  hover: cursor-default'>Confirmed</button>
+                          </div>}  
+                  {order.status === 'completed' && <div className=' flex flex-col gap-2 '> 
+                    <button className=' text-black border border-black h-8 w-28  hover: cursor-default'>Shipped ✅</button>
+                   </div>} 
+                    {order.status === 'cancelled' && <div className=' flex flex-col gap-2 '> 
+                    <button className=' text-black border border-black h-8 w-28  hover: cursor-default'>Cancelled ❌</button>
+                   </div>} 
+                 </div>
+                 
+                }
             </li>
+            
+
           ))
         )}
       </ul>

@@ -83,9 +83,10 @@ useEffect(() => {
           <input onChange={(e) => setImage(e.target.files[0])} type="file" id='upload-area' hidden />
                 <input  onChange={(e) => setName(e.target.value)} value={name}  type="text" placeholder='Name' className='block mx-auto border border-black text-xl  text-blue-900 text-center ' />
                   <input onChange={(e) => setSize(e.target.value)} value={size} type="text" placeholder='Size' className='mt-2 block mx-auto border border-black text-xl  text-blue-900 text-center ' />
-               <input onChange={(e) => setQuantity(e.target.value)} value={quantity} type="text" placeholder='Quantity' className='mt-2 block mx-auto border border-black text-xl  text-blue-900 text-center ' />
                <input onChange={(e) => setRate(e.target.value)} value={rate} type="text" placeholder='Rate' className='mt-2 block mx-auto border border-black text-xl  text-blue-900 text-center ' />
-                  
+           
+               <input onChange={(e) => setQuantity(e.target.value)} value={quantity} type="text" placeholder='Quantity' className='mt-2 block mx-auto border border-black text-xl  text-blue-900 text-center ' />
+                    
             <button   type='submit' className='bg-blue-800 text-white mt-2 block mx-auto px-2'>Add +</button>
            
             </div> 

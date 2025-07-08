@@ -16,7 +16,7 @@ function App() {
       <header className="App-header">
        
         <Navbar />
-        <Profile />
+       
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/:_id' element={<Pattidetails/>} />

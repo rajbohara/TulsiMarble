@@ -10,7 +10,8 @@ const pattiSchema = new mongoose.Schema({
     name: { type: String, required: true},
     rate: { type: String, required: true},
     quantity: { type: Number, required: true},
-    image: { type: String, required: false }
+    image: { type: String, required: false },
+    CoveragePerBox: { type: String, required: false },
 }, { _id: false }); // disables default ObjectId
 
 pattiSchema.plugin(AutoIncrement, { inc_field: '_id' });

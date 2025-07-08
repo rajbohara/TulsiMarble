@@ -9,6 +9,7 @@ import {toast} from 'react-toastify'
  import { useNavigate } from 'react-router-dom'
 
 function Pattidetails() {
+    const [additionalPatti, setAdditionalPatti] = useState([]);
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [quantityreq, setQuantityreq] = useState('');
@@ -17,7 +18,7 @@ function Pattidetails() {
       const backendURL = 'http://localhost:3000';
      const [adding, setAdding] = useState(false);
     const {_id}= useParams();
-    console.log(_id);
+    
      const { user, isLoaded } = useUser();
 
 const handleorder = async () => {
@@ -85,16 +86,29 @@ const handleorder = async () => {
       }
     }
 
+    const fetchadditional = async () => {
+        const { data } = await axios.get(`${backendURL}/additionalinfo/${_id}`);
+
+        if (data.success) {
+        console.log("additional data fetched", data);
+         setAdditionalPatti(data.additionalPatti);
+
+        } else {
+          toast.error(data.message);
+        }
+    }
+
 useEffect(() => {
     console.log("useeffect called")
     fetchselected();
+    fetchadditional();
   }, []);
 
   
     console.log(selectedpatti);
 return ( 
   <div>
-      console.log("mainwala")
+     
     {selectedpatti ? ( 
       <div className='w-96 text-center mx-auto my-14'>
         <img
@@ -133,10 +147,28 @@ return (
         </div>
       </div>
     )}
+
+     <div className="p-4">
+      
+      
+       {additionalPatti && (
+        
+  <div key={additionalPatti._id} className="border p-4 rounded-lg shadow mb-6">
+     <h2 className="text-xl font-bold mb-4">More Information:</h2>
+    <p><strong>Patti ID:</strong> {additionalPatti.pattid}</p>
+    <p><strong>Info:</strong> {additionalPatti.additionalInfo}</p>
+
+    <div className="mt-6 flex flex-wrap  justify-center gap-4">
+      {additionalPatti.images?.map((img, idx) => (
+            <img key={idx} src={img}  className="gap-8 h-56 w-56 object-cover rounded-md" alt="" />
+          ))}
+    </div>
+  </div>
+)}
+
+    </div>
   </div>
 );
-
-  
 }
 
 export default Pattidetails
