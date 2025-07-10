@@ -10,8 +10,13 @@ function Inventory() {
      const [quantity, setQuantity] = useState('');
       const [rate, setRate] = useState('');
        const [image, setImage] = useState(false);
-     
+        const [category, setCategory] = useState('');
          const [patti, setPatti] = useState([])
+          const [type, setType] = useState('');
+          const categoryOptionsByType = {
+  Marble: ['Pink', 'Green', 'White', 'Crystal Black', 'Multi-Color'],
+  Decorations: ['Rangoli', 'Welcome', 'Border Strips', 'Single-Color'],
+};
          
        const backendURL = 'http://localhost:3000';
  const fetchInventory = async () => {
@@ -44,6 +49,8 @@ useEffect(() => {
         formData.append('size',size)
         formData.append('quantity',Number(quantity))
         formData.append('rate',rate)
+        formData.append('category',category)
+        formData.append('type',type)
       
        formData.forEach((value,key) => {
          console.log(`${key}:${value}`)
@@ -86,7 +93,29 @@ useEffect(() => {
                <input onChange={(e) => setRate(e.target.value)} value={rate} type="text" placeholder='Rate' className='mt-2 block mx-auto border border-black text-xl  text-blue-900 text-center ' />
            
                <input onChange={(e) => setQuantity(e.target.value)} value={quantity} type="text" placeholder='Quantity' className='mt-2 block mx-auto border border-black text-xl  text-blue-900 text-center ' />
-                    
+           
+ <select
+  onChange={(e) => setType(e.target.value)}
+  value={type}
+  className='mt-2 block mx-auto border border-black text-xl text-blue-900 text-center'
+>
+  <option value="">Select Type</option>
+  <option value="Decorations">Decorations</option>
+  <option value="Marble">Marble</option>
+</select>
+
+<select
+  onChange={(e) => setCategory(e.target.value)}
+  value={category}
+  className='mt-2 block mx-auto border border-black text-xl text-blue-900 text-center'
+>
+  <option value="">Select Category</option>
+  {categoryOptionsByType[type]?.map((cat, idx) => (
+    <option key={idx} value={cat}>{cat}</option>
+  ))}
+</select>
+
+
             <button   type='submit' className='bg-blue-800 text-white mt-2 block mx-auto px-2'>Add +</button>
            
             </div> 

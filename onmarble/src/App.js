@@ -8,6 +8,7 @@ import Profile from './pages/User';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MyOrders from './pages/MyOrders';
+import Categorised from './pages/Categorised';
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/:_id' element={<Pattidetails/>} />
           <Route path='/MyOrders/:userid' element={<MyOrders/>} />
-          
+          <Route path='/category/:category' element={<Categorised/>} />
         </Routes>
         <ToastContainer />
       </header>
