@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 
 function MyOrders() {  
   
-  const backendURL = 'http://localhost:3000';
+  const backendURL = process.env.REACT_APP_BACKEND_URL;
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

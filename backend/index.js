@@ -1,8 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 const app = express();
-const port = 3000;
-const uri = "mongodb+srv://iamwhole:12345@cluster0.fc0qg.mongodb.net";
+
 import mongoose from "mongoose";
 import upload from './upload.js'; // multer with cloudinary
 import dotenv from 'dotenv';
@@ -13,6 +12,9 @@ import Order from './models/orderModel.js';
 import adminRouter from './routes/adminRouter.js';
 
 dotenv.config();
+
+const port = process.env.PORT;
+const uri = process.env.MONGODB_URI;
 app.use(ClerkExpressWithAuth());
 
 const connectDB = async () => {

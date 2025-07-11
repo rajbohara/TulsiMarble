@@ -6,7 +6,7 @@ import { useUser } from '@clerk/clerk-react';
 function MyOrders() {  
   const { user, isLoaded } = useUser();
   const { getToken } = useAuth();
-  const backendURL = 'http://localhost:3000';
+  const backendURL = process.env.REACT_APP_BACKEND_URL;
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -41,7 +41,7 @@ function MyOrders() {
   };
 
   return (
-    <div>
+    <div className="pt-10">
       <p className='text-3xl text-blue-900 mx-2 my-3 underline'> All Orders - </p>
       {loading && <p>Loading orders...</p>}
       {error && <p style={{color: 'red'}}>{error}</p>}

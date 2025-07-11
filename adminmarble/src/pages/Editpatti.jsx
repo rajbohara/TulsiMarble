@@ -16,7 +16,7 @@ function Pattidetails() {
   const [image, setImage] = useState(false);
 
   const [selectedpatti, setSelectedpatti] = useState()
-  const backendURL = 'http://localhost:3000';
+  const backendURL = process.env.REACT_APP_BACKEND_URL;
   const [isedit, setIsedit] = useState(false);
   const { _id } = useParams();
   console.log(_id);

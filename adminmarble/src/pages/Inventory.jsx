@@ -14,11 +14,11 @@ function Inventory() {
          const [patti, setPatti] = useState([])
           const [type, setType] = useState('');
           const categoryOptionsByType = {
-  Marble: ['Pink', 'Green', 'White', 'Crystal Black', 'Multi-Color'],
-  Decorations: ['Rangoli', 'Welcome', 'Border Strips', 'Single-Color'],
+  Marble: ['Pink', 'Green', 'White', 'P-White','S-White', 'Multi-Color'],
+  Decorations: ['Rangoli', 'Welcome', 'Border Strips', 'Single-Color','Tilak'],
 };
          
-       const backendURL = 'http://localhost:3000';
+       const backendURL = process.env.REACT_APP_BACKEND_URL;
  const fetchInventory = async () => {
     try {
       const { data } = await axios.get(`${backendURL}/admin/inventory`);

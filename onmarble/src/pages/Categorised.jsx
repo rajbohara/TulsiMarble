@@ -10,7 +10,7 @@ function Categorised() {
 
   const navigate = useNavigate();
   const [patti, setPatti] = useState([]);
-  const backendURL = 'http://localhost:3000';
+  const backendURL = process.env.REACT_APP_BACKEND_URL; // Ensure you have this in your .env file
   const [type, setType] = useState('Decorations');
 
 const fetchInventory = async () => {
@@ -39,14 +39,14 @@ const fetchInventory = async () => {
     <>
      
       {/* Category-wise Grouped Section */}
-      <div className="mt-10 px-10 pt-12">
+      <div className="pt-12 ">
         
          
-            <h1 className='text-3xl my-3 text-blue-900 underline mb-8'>{category}</h1>
-            <div className="flex flex-wrap gap-6 justify-start">
+            <h1 className='text-3xl my-3 text-blue-900 underline mb-8 px-10'>{category}</h1>
+            <div className="flex flex-wrap gap-4 md:gap-9  justify-center  px-2 md:px-10 ">
               {patti.map(item => (
-                <div key={item._id} onClick={() => navigate(`/${item._id}`)} className='max-w-60 min-w-40 shadow-sm hover:shadow-lg cursor-pointer'>
-                  <img className='w-full h-40 object-cover rounded-xl' src={item.image} alt="" />
+                <div key={item._id} onClick={() => navigate(`/${item._id}`)} className='max-w-72 min-w-40 md:min-w-52 shadow-sm hover:shadow-lg cursor-pointer'>
+                  <img className='w-full h-52 object-cover rounded-xl' src={item.image} alt="" />
                   <p className='text-lg text-blue-900 text-center'>{item.name}</p>
                   <p className='text-blue-900 text-center text-sm'>Size: {item.size}</p>
                 </div>
