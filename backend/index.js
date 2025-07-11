@@ -12,6 +12,7 @@ import Order from './models/orderModel.js';
 import adminRouter from './routes/adminRouter.js';
 
 dotenv.config();
+app.use(cors({ origin: '*', credentials: true }));
 
 const port = process.env.PORT;
 const uri = process.env.MONGODB_URI;
