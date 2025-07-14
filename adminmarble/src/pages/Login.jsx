@@ -49,7 +49,7 @@ function Login() {
        
         <br />
         <button onClick={() => submitHandler()} className='bg-blue-900 h-12 w-full text-white text-lg sm:text-xl mt-8 rounded hover:bg-blue-800 transition-all'>Login</button>
-        <a className='underline text-blue-900 text-center block mt-4' href="">Login as user?</a>
+        <a className='underline text-blue-900 text-center block mt-4'  href={`${process.env.REACT_APP_USER_URL}/`}>User?</a>
       </div>
    </div>
   )

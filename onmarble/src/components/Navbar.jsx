@@ -12,6 +12,7 @@ import {toast} from 'react-toastify'
 function Navbar() {
   const navigate = useNavigate();
     const { user, isLoaded } = useUser();
+    const [dikha, setDikha] = React.useState(false);
   return (
 
     <div  className=' fixed top-0 left-0 w-full z-50'>
@@ -23,8 +24,10 @@ function Navbar() {
 >Admin?</span>): <span className='text-white hover:cursor-pointer' onClick={()=>{navigate(`/MyOrders/${user.id}`)}}> My Orders </span>
 }
       
-      <div className='flex items-center'> <Clerkheader/> </div>
-         <Bars3Icon className="h-6 w-6 text-white  my-auto" />
+      <div className='flex items-center relative'> <Clerkheader/> </div>
+         <Bars3Icon onClick={()=> setDikha(!dikha)}  className="h-6 w-6 text-white  my-auto hover:cursor-pointer" />
+           <ul onClick={()=> window.location.href = `${process.env.REACT_APP_ADMIN_URL}`}  className={`${!dikha?'hidden':''} bg-white px-2 absolute top-6 border border-black right-1 hover:cursor-pointer hover:bg-slate-300`}>Admin</ul>
+        
          </div>
     </div>
    

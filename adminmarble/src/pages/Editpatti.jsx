@@ -173,7 +173,7 @@ function Pattidetails() {
     <div>
       {selectedpatti ? (
         <div className='relative w-96 text-center mx-auto my-14'>
-           <span onClick={()=> handledeletepatti()} className='cursor-pointer hover:underline text-blue-800 absolute -right-10 top-5'>Delete</span>
+           <span onClick={()=> handledeletepatti()} className='cursor-pointer hover:underline text-blue-800 absolute right-0 top-5'>Delete</span>
           <form onSubmit={onSubmitHandler} action="">
             <label htmlFor="photoyaha" className={`${isedit ? '' : 'hidden'}`}>            
               <img
@@ -184,7 +184,7 @@ function Pattidetails() {
             </label>
            <input type="file" id='photoyaha'  hidden onChange={ (e)=> setImage(e.target.files[0])} />
              <img
-              className={`w-11/12 h-5/6 p-5 mx-auto object-cover rounded-3xl ${isedit ? 'hidden' : ''}`}
+              className={`w-10/12 h-5/6 p-5 mx-auto object-cover rounded-3xl ${isedit ? 'hidden' : ''}`}
               src={ image? URL.createObjectURL(image):  selectedpatti.image}
               alt=""
             />

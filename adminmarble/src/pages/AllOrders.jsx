@@ -8,7 +8,8 @@ function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-    const { adminToken} = useContext(AdminContext)
+  const { adminToken} = useContext(AdminContext);
+
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -57,7 +58,8 @@ function MyOrders() {
               key={order._id}
               className="bg-white shadow rounded-md p-4 sm:p-6 relative"
             >
-              <div className="text-sm sm:text-base">
+              <div className='flex'>
+              <div className="text-sm sm:text-base  inline-block">
                 <p><strong>Order ID:</strong> {order._id}</p>
                 <p><strong>Quantity:</strong> {order.quantity}</p>
                 <p><strong>Phone:</strong> {order.phone}</p>
@@ -65,7 +67,7 @@ function MyOrders() {
               </div>
 
               {/* Status Buttons */}
-              <div className="absolute top-4 right-4 flex flex-col gap-2">
+              <div className=" ml-auto flex flex-col gap-2 ">
                 {!order.status ? (
                   <>
                     <button
@@ -115,7 +117,7 @@ function MyOrders() {
                   </>
                 )}
               </div>
-
+           </div>
               {/* Patti Info */}
               <div className="mt-4 bg-gray-50 p-4 rounded text-sm sm:text-base">
                 {order.pattid ? (

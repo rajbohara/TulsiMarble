@@ -171,7 +171,7 @@ function Inventory() {
           Object.entries(grouped[type]).map(([cat, items]) => (
             <div key={cat} className='mb-10'>
               <div
-                className='flex justify-between items-center bg-blue-50 px-4 py-2 rounded-xl cursor-pointer'
+                className='flex justify-between items-center bg-blue-50  px-4 py-2 rounded-xl cursor-pointer'
                 onClick={() => toggleCategory(cat)}
               >
                 <h2 className='text-xl font-bold text-blue-900 underline'>{cat}</h2>
@@ -180,15 +180,15 @@ function Inventory() {
                 </span>
               </div>
               {expandedCategories[cat] && (
-                <div className='flex flex-wrap gap-6 mt-4'>
+                <div className='flex flex-wrap gap-2 sm:gap-6 mt-4 justify-center'>
                   {items.map((item) => (
                     <div
                       key={item._id}
                       onClick={() => navigate(`/admin/editpatti/${item._id}`)}
-                      className='max-w-xs min-w-[200px] shadow-sm hover:shadow-lg cursor-pointer rounded-xl bg-white p-2'
+                      className='max-w-xs  shadow-sm hover:shadow-lg cursor-pointer rounded-xl bg-white p-1 sm:p-2'
                     >
                       <img
-                        className='w-full h-36 object-cover rounded-lg mb-2'
+                        className=' w-44  sm:w-52 h-52 object-cover rounded-xl'
                         src={item.image}
                         alt=""
                       />
