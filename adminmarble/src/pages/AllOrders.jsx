@@ -1,46 +1,37 @@
-
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useContext,useEffect, useState } from 'react';
+import { AdminContext } from '../context/AdminContext';
+import { toast } from 'react-toastify';
 
-
-function MyOrders() {  
-  
+function MyOrders() {
   const backendURL = process.env.REACT_APP_BACKEND_URL;
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [status, setStatus] = useState(''); // Added status state
-
+    const { adminToken} = useContext(AdminContext)
   useEffect(() => {
-    if (1) {
-      fetchOrders();
-    }
+    fetchOrders();
   }, []);
 
   const fetchOrders = async () => {
-   
     setLoading(true);
     try {
-      const response = await axios.get(`${backendURL}/admin/allorders`);
-
-      if(response.data.success){
+      const response = await axios.get(`${backendURL}/admin/allorders`,{headers:{aToken: adminToken}});
+      if (response.data.success) {
         setOrders(response.data.orders);
       }
     } catch (error) {
       setError("Failed to load orders");
-      console.error('failed:', error);   
+      console.error('Failed:', error);
     }
     setLoading(false);
   };
 
-  const handleStatus = async (status,orderId) => {
-   
+  const handleStatus = async (status, orderId) => {
     try {
-      const response = await axios.put(`${backendURL}/admin/orderstatus/${orderId}`, { status });
+      const response = await axios.put(`${backendURL}/admin/orderstatus/${orderId}`, { status },{headers:{aToken: adminToken}});
       if (response.data.success) {
-        fetchOrders(); // Refresh orders after updating status
-       
-
+        fetchOrders(); // Refresh orders
       } else {
         setError("Failed to update order status");
       }
@@ -48,68 +39,108 @@ function MyOrders() {
       setError("Failed to update order status");
       console.error('Update failed:', error);
     }
-  }
+  };
 
   return (
-    <div className='pt-10'>
-      <p className='text-3xl text-blue-900 mx-2 my-3 underline'> All Orders - </p>
-      {loading && <p>Loading orders...</p>}
-      {error && <p style={{color: 'red'}}>{error}</p>}
-      <ul>
-        {orders.length === 0 && !loading ? (
-          <li>No orders found.</li>
-        ) : (
-          [...orders].reverse().map(order => (
-            <li key={order._id} style={{ marginBottom: '2em', border: '1px solid #ccc', padding: '1em', borderRadius: '6px' }}>
-              <div className='relative'>
-                <strong>Order ID:</strong> {order._id}<br/>
-                <strong>Quantity:</strong> {order.quantity}<br/>
-                <strong>Phone:</strong> {order.phone}<br/>
-                <strong>Created At:</strong> {new Date(order.createdAt).toLocaleString()}<br/>
-                {!order.status ? (
-                   <div className='absolute top-2 flex flex-col right-5 gap-2 '>
-                 <button onClick={()=>handleStatus('confirmed',order._id)} className=' text-black border border-black h-8 w-28  hover:bg-green-500 hover:text-white '>Confirm ?</button>
-                 <button onClick={()=>handleStatus('cancelled',order._id)} className=' text-black border border-black h-8 w-28  hover:bg-red-500 hover:text-white '>Cancel ?</button>
-                 <button onClick={()=>handleStatus('completed',order._id)} className=' text-black border border-black h-8 w-28  hover:bg-blue-800 hover:text-white '>Completed ?</button>
-                </div>
-                ):
-                <div className='absolute top-2 flex flex-col right-5 gap-2 '>
-                  {order.status === 'confirmed' && <div className=' flex flex-col gap-2 '> 
-                    <button className=' text-black border border-black h-8 w-28  hover: cursor-default'>Pending</button>
-                      <button onClick={()=>handleStatus('completed',order._id)} className=' text-black border border-black h-8 w-28  hover:bg-blue-800 hover:text-white '>Completed ?</button>
-                  </div>}  
-                  {order.status === 'completed' && <div className=' flex flex-col gap-2 '> 
-                    <button className=' text-black border border-black h-8 w-28  hover: cursor-default'>Shipped ✅</button>
-                   </div>} 
-                    {order.status === 'cancelled' && <div className=' flex flex-col gap-2 '> 
-                    <button className=' text-black border border-black h-8 w-28  hover: cursor-default'>Cancelled ❌</button>
-                   </div>} 
-                 </div>
-                 
-                }
-                
+    <div className="pt-12 px-4 sm:px-6 lg:px-8 min-h-screen bg-gray-100">
+      <h1 className="text-3xl font-semibold text-blue-900 mb-6 underline">All Orders</h1>
 
+      {loading && <p className="text-gray-700">Loading orders...</p>}
+      {error && <p className="text-red-600">{error}</p>}
+
+      <div className="space-y-6">
+        {orders.length === 0 && !loading ? (
+          <p>No orders found.</p>
+        ) : (
+          [...orders].reverse().map((order) => (
+            <div
+              key={order._id}
+              className="bg-white shadow rounded-md p-4 sm:p-6 relative"
+            >
+              <div className="text-sm sm:text-base">
+                <p><strong>Order ID:</strong> {order._id}</p>
+                <p><strong>Quantity:</strong> {order.quantity}</p>
+                <p><strong>Phone:</strong> {order.phone}</p>
+                <p><strong>Created:</strong> {new Date(order.createdAt).toLocaleString()}</p>
               </div>
-              {order.pattid ? (
-                <div style={{marginTop: '1em', background:'#f9f9f9', padding: '1em', borderRadius: '4px'}}>
-                  <strong>Patti Info:</strong><br/>
-                  <strong>Name:</strong> {order.pattid.name}<br/>
-                  <strong>Size:</strong> {order.pattid.size}<br/>
-                  <strong>Rate:</strong> {order.pattid.rate}<br/>
-                  <strong>Patti Id:</strong> {order.pattid._id}<br/>
-                  <strong>Available Quantity:</strong> {order.pattid.quantity}<br/>
-                  {order.pattid.image && (
-                    <img src={order.pattid.image} alt={order.pattid.name} width={100} style={{marginTop: '0.5em'}} />
-                  )}
-                 
-                </div>
-              ) : (
-                <div style={{color:'red'}}>Patti info missing</div>
-              )}
-            </li>
+
+              {/* Status Buttons */}
+              <div className="absolute top-4 right-4 flex flex-col gap-2">
+                {!order.status ? (
+                  <>
+                    <button
+                      onClick={() => handleStatus('confirmed', order._id)}
+                      className="border border-black px-3 py-1 rounded hover:bg-green-500 hover:text-white"
+                    >
+                      Confirm?
+                    </button>
+                    <button
+                      onClick={() => handleStatus('cancelled', order._id)}
+                      className="border border-black px-3 py-1 rounded hover:bg-red-500 hover:text-white"
+                    >
+                      Cancel?
+                    </button>
+                    <button
+                      onClick={() => handleStatus('completed', order._id)}
+                      className="border border-black px-3 py-1 rounded hover:bg-blue-800 hover:text-white"
+                    >
+                      Completed?
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {order.status === 'confirmed' && (
+                      <>
+                        <span className="border border-black px-3 py-1 rounded text-center bg-yellow-100 cursor-default">
+                          Pending
+                        </span>
+                        <button
+                          onClick={() => handleStatus('completed', order._id)}
+                          className="border border-black px-3 py-1 rounded hover:bg-blue-800 hover:text-white"
+                        >
+                          Completed?
+                        </button>
+                      </>
+                    )}
+                    {order.status === 'completed' && (
+                      <span className="border border-black px-3 py-1 rounded bg-green-100 cursor-default">
+                        Shipped ✅
+                      </span>
+                    )}
+                    {order.status === 'cancelled' && (
+                      <span className="border border-black px-3 py-1 rounded bg-red-100 cursor-default">
+                        Cancelled ❌
+                      </span>
+                    )}
+                  </>
+                )}
+              </div>
+
+              {/* Patti Info */}
+              <div className="mt-4 bg-gray-50 p-4 rounded text-sm sm:text-base">
+                {order.pattid ? (
+                  <>
+                    <p><strong>Name:</strong> {order.pattid.name}</p>
+                    <p><strong>Size:</strong> {order.pattid.size}</p>
+                    <p><strong>Rate:</strong> {order.pattid.rate}</p>
+                    <p><strong>Patti ID:</strong> {order.pattid._id}</p>
+                    <p><strong>Available Quantity:</strong> {order.pattid.quantity}</p>
+                    {order.pattid.image && (
+                      <img
+                        src={order.pattid.image}
+                        alt={order.pattid.name}
+                        className="mt-2 w-28 h-auto rounded border"
+                      />
+                    )}
+                  </>
+                ) : (
+                  <p className="text-red-600 font-medium">Patti info missing</p>
+                )}
+              </div>
+            </div>
           ))
         )}
-      </ul>
+      </div>
     </div>
   );
 }

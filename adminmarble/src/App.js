@@ -8,10 +8,12 @@ import Editpatti from './pages/Editpatti';
 import AllOrders from './pages/AllOrders';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import AdminContextProvider from './context/AdminContext';
 
 function App() {
   return (
     <BrowserRouter>
+    <AdminContextProvider>
     <div className="App">
            <Navbar />
     <Routes>
@@ -23,6 +25,7 @@ function App() {
      <ToastContainer />
 
     </div>
+    </AdminContextProvider>
     </BrowserRouter>
   );
 }

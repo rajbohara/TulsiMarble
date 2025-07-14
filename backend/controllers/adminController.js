@@ -1,4 +1,21 @@
+import jwt from 'jsonwebtoken';
 
+const loginAdmin = async(req,res)=>{
+    try {
+        const {email,password} = req.body;
+        if( email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD ){
+           const token = jwt.sign(email+password,process.env.JWT_SECRET)
+           res.status(200).json({success:true,message:"Login successful",token});
+
+        } else {
+            return res.status(400).json({success:false,message:"Invalid email or password"})
+        }
+            
+    } catch (error) {
+        console.log(error)
+    res.status(500).json({success:false,message:error.message})
+    }
+}
 
 const addPatti = async(req,res)=>{
     console.log(" route hit");
@@ -58,12 +75,14 @@ const deleteAdditionalInfo = async(req,res)=>{
      console.log("delete additional route hit ");
      const { default: AdditionalPatti } = await import('../models/additionalpattiModel.js');
       const { _id } = req.params;
-       
+        const pattid = _id; 
        
     try {
         
-        const deleted = await AdditionalPatti.findOneAndDelete(_id);
-
+        const deleted = await AdditionalPatti.findOneAndDelete({ pattid });
+        if (!deleted) {
+            return res.status(404).json({ success: false, message: "Additional info not found" });
+        }
         res.status(201).json({success: true, message: "Additional info deleted successfully", deleted });
     } catch (error) {
         console.error("Error adding patti:", error);
@@ -76,7 +95,7 @@ const deletePatti = async(req,res)=>{
       const { _id } = req.params;
     try {
         
-        const deleted = await pattiModel.findOneAndDelete(_id);
+        const deleted = await pattiModel.findOneAndDelete({ _id });
 
         res.status(201).json({success: true, message: "deleted successfully", deleted });
     } catch (error) {
@@ -102,14 +121,25 @@ const addAdditionalInfo = async(req,res)=>{
         const newAdditionalPatti = new AdditionalPatti({
             ...updateddata
         });
-
+        console.log("newAdditionalPatti", newAdditionalPatti);
+        const existingAdditionalPatti = await AdditionalPatti.findOne({ pattid });
+        if (existingAdditionalPatti) {  
+            // If additional info already exists, update it
+            await AdditionalPatti.updateOne({ pattid }, updateddata);
+            const updatedAdditionalPatti = await AdditionalPatti.findOne({ pattid });
+            return res.status(200).json({   
+                success: true,
+                message: "Additional info updated successfully",
+                additionalPatti: updatedAdditionalPatti
+            }); 
+        } else {
         const savedAdditionalPatti = await newAdditionalPatti.save();
 
         res.status(201).json({
             success: true,
             message: "Additional info added successfully",
             additionalPatti: savedAdditionalPatti
-        });
+        }); }
     } catch (error) {
         console.error("Error adding additional info", error);
         res.status(500).json({
@@ -118,6 +148,7 @@ const addAdditionalInfo = async(req,res)=>{
         });
     }
 }
+
 const inventory = async(req,res)=>{
      console.log(" route hit to get inventory");
      const { default: pattiModel } = await import('../models/pattiModel.js');
@@ -170,4 +201,4 @@ const orderStatus = async(req,res)=>{
     }
 }
 
-export  {addPatti,editPatti, deleteAdditionalInfo, deletePatti, addAdditionalInfo, inventory, allOrders,selectedPatti,orderStatus};
+export  {addPatti,editPatti, deleteAdditionalInfo, deletePatti, addAdditionalInfo, inventory, allOrders,selectedPatti,orderStatus, loginAdmin};

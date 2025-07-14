@@ -1,12 +1,14 @@
-
-import React, { useEffect, useState } from 'react'
+import React, {useContext, useEffect, useState } from 'react'
 
 import { useNavigate, useParams } from 'react-router-dom';
 
 import axios from 'axios';
 import { toast } from 'react-toastify'
 
+import { AdminContext } from '../context/AdminContext';
+
 function Pattidetails() {
+   const { adminToken} = useContext(AdminContext)
   const navigate = useNavigate();
  const [additionalPatti, setAdditionalPatti] = useState([]);
   const [name, setName] = useState('');
@@ -14,7 +16,7 @@ function Pattidetails() {
   const [quantity, setQuantity] = useState('');
   const [rate, setRate] = useState('');
   const [image, setImage] = useState(false);
-
+  const [isaddedit, setIsaddedit] = useState(false);
   const [selectedpatti, setSelectedpatti] = useState()
   const backendURL = process.env.REACT_APP_BACKEND_URL;
   const [isedit, setIsedit] = useState(false);
@@ -31,7 +33,7 @@ function Pattidetails() {
     }
     formData.append('additionalInfo', additionalInfo);
     try {
-      const response = await axios.post(`${backendURL}/admin/addpattiimages/${_id}`, formData);
+      const response = await axios.post(`${backendURL}/admin/addpattiimages/${_id}`, formData,{headers:{aToken: adminToken}});
       if (response.data.success) {
          setAdditionalPatti(response.data.additionalPatti);
         toast.success(response.data.message);
@@ -44,17 +46,26 @@ function Pattidetails() {
     }
   }
 
-   const fetchadditional = async () => {
-        const { data } = await axios.get(`${backendURL}/additionalinfo/${_id}`);
+  const fetchadditional = async () => {
+  try {
+    const { data } = await axios.get(`${backendURL}/additionalinfo/${_id}`);
 
-        if (data.success) {
-        console.log("additional data fetched", data);
-         setAdditionalPatti(data.additionalPatti);
+    if (data.success) {
+      console.log("additional data fetched", data);
+      setAdditionalPatti(data.additionalPatti);
 
-        } else {
-          toast.error(data.message);
-        }
+      if (data.additionalPatti) {
+        setAdditionalInfo(data.additionalPatti.additionalInfo);
+        setAdditionalImages(data.additionalPatti.images || []);
+      }
+    } else {
+      toast.error(data.message);
     }
+  } catch (err) {
+    toast.error("Failed to fetch additional info.");
+    console.error(err);
+  }
+};
 
   async function onSubmitHandler(event) {
     event.preventDefault();
@@ -75,7 +86,7 @@ function Pattidetails() {
           console.log(`${key}:${value}`)
         });
         console.log("updating")
-        const { data } = await axios.post(backendURL + `/admin/editpatti/${_id}`, formData)
+        const { data } = await axios.post(backendURL + `/admin/editpatti/${_id}`, formData,{headers:{aToken: adminToken}})
         if (data.success) {
           console.log("hanji ho gaya edit")
           toast.success(data.message)
@@ -100,7 +111,7 @@ function Pattidetails() {
   const fetchselected = async () => {
     try {
       console.log("selected lara")
-      const { data } = await axios.get(`${backendURL}/admin/selectedpatti/${_id}`);
+      const { data } = await axios.get(`${backendURL}/admin/selectedpatti/${_id}`,{headers:{aToken: adminToken}});
 
       if (data.success) {
         setSelectedpatti(data.selectedpatti);
@@ -120,9 +131,12 @@ function Pattidetails() {
 
   const handledeleteinfo = async () => {
     try {
-      const { data } = await axios.get(`${backendURL}/admin/deleteadditionalinfo/${_id}`);
+      const { data } = await axios.get(`${backendURL}/admin/deleteadditionalinfo/${_id}`,{headers:{aToken: adminToken}});
       if (data.success) {
         toast.success(data.message);
+        setAdditionalImages([]);
+        setAdditionalInfo('');
+        setIsaddedit(false);
         setAdditionalPatti(null); // Clear the additional info after deletion
       } else {
         toast.error(data.message || "Something went wrong");
@@ -133,7 +147,7 @@ function Pattidetails() {
   }
    const handledeletepatti = async () => {
     try {
-      const { data } = await axios.get(`${backendURL}/admin/deletepatti/${_id}`);
+      const { data } = await axios.get(`${backendURL}/admin/deletepatti/${_id}`,{headers:{aToken: adminToken}});
       if (data.success) {
         handledeleteinfo();
         setAdditionalPatti(null); // Clear the additional info after deletion
@@ -207,6 +221,7 @@ function Pattidetails() {
   <div key={additionalPatti._id} className=" relative border p-4 rounded-lg shadow mb-6">
     <span onClick={()=> handledeleteinfo()} className='cursor-pointer hover:underline text-blue-800 absolute right-5 top-5'>Delete</span>
     <p><strong>Patti ID:</strong> {additionalPatti.pattid}</p>
+    
    <strong>Info:</strong>
     <pre className='ml-10 text-left ' >{additionalPatti.additionalInfo?.split('\n').map((line, idx) => {
     const [key, ...rest] = line.split(':');
@@ -217,12 +232,24 @@ function Pattidetails() {
       </span>
     );
   })}</pre>
+ 
+<p className={`text-blue-900 my-5 underline  text-center ${isaddedit ? '' : 'hidden'}`}>Additional Info : </p>
+            <textarea  onChange={(e) => {
+    setAdditionalInfo(e.target.value);
+  }} className={`p-2 w-96 h-40 border border-black mt-3 text-blue-900 text-left block mx-auto ${isaddedit ? '' : 'hidden'}`} name="" id="" value={additionalInfo} />
+
 
     <div className="mt-6 flex flex-wrap  justify-center gap-4">
       {additionalPatti.images?.map((img, idx) => (
             <img key={idx} src={img}  className="gap-8 h-56 w-56 object-cover rounded-md" alt="" />
           ))}
     </div>
+      <button  type="button" onClick={() => setIsaddedit(!isaddedit)} className={`block py-2 my-4 px-16 mx-auto bg-blue-900 text-xl text-white  ${isaddedit ? 'hidden' : ''}`}>
+              Edit
+            </button>
+            <button type='submit' onClick={()=>{ handleAdditionals(); setIsaddedit(!isaddedit)}} className={`py-2 my-4 px-16 block mx-auto bg-blue-900 text-xl text-white  ${isaddedit ? '' : 'hidden'}`}>
+              Save
+            </button>
   </div>
 ): (  <div className='w-screen mx-auto my-14'>
         <h1 className='text-2xl text-center my-5 underline  text-blue-900'>Add More Images -</h1>

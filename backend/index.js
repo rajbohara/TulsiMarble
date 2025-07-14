@@ -1,17 +1,20 @@
 import express from 'express';
+import dotenv from 'dotenv';
+dotenv.config();
+console.log(process.env.CLOUDINARY_API_KEY);
 import cors from 'cors';
 const app = express();
 
 import mongoose from "mongoose";
 import upload from './upload.js'; // multer with cloudinary
-import dotenv from 'dotenv';
+
 import { ClerkExpressWithAuth } from '@clerk/clerk-sdk-node';
 import requireAuth from './clerkAuth.js';
 import User from './models/userModel.js';
 import Order from './models/orderModel.js';
 import adminRouter from './routes/adminRouter.js';
 
-dotenv.config();
+
 app.use(cors({ origin: '*', credentials: true }));
 
 const port = process.env.PORT;
