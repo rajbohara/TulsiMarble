@@ -149,7 +149,7 @@ function Pattidetails() {
     try {
       const { data } = await axios.get(`${backendURL}/admin/deletepatti/${_id}`,{headers:{aToken: adminToken}});
       if (data.success) {
-        handledeleteinfo();
+       if(additionalPatti) handledeleteinfo();
         setAdditionalPatti(null); // Clear the additional info after deletion
         toast.success("Patti deleted successfully");
         navigate('/Inventory');
