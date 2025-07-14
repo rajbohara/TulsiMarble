@@ -207,7 +207,7 @@ function Inventory() {
             </div>
           ))
         ) : (
-          <div className='text-center text-gray-500'>No items found for this type.</div>
+          <div className='text-center text-gray-500'>Loading.</div>
         )}
       </div>
     </div>
