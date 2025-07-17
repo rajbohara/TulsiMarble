@@ -87,7 +87,7 @@ function Pattidetails() {
 
           <p className='text-2xl text-blue-900 mt-4'>{selectedpatti.name}</p>
           <p className='text-blue-900'>Size: {selectedpatti.size} {selectedpatti.type === 'Marble' ? 'inch' : ''}</p>
-          <p className='text-blue-900'>Rate: {selectedpatti.rate}</p>
+          <p className='text-blue-900'>Rate: {selectedpatti.rate} (Will be decided on Call)</p>
           <p className='text-blue-900'>Quantity: {selectedpatti.quantity}</p>
 
           <button
