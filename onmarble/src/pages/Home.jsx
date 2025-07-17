@@ -86,7 +86,7 @@ function Home() {
                       alt=""
                     />
                     <p className='text-base sm:text-lg text-blue-900 text-center font-medium'>{item.name}</p>
-                    <p className='text-blue-900 text-center text-sm'>Size: {item.size}</p>
+                    <p className='text-blue-900 text-center text-sm'>Size: {item.size} {item.type === 'Marble' ? 'inch' : ''}</p>
                   </div>
                 ))}
               </div>

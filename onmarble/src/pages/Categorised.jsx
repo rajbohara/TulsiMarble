@@ -48,7 +48,7 @@ const fetchInventory = async () => {
                 <div key={item._id} onClick={() => navigate(`/${item._id}`)} className='max-w-72 min-w-40 md:min-w-52 shadow-sm hover:shadow-lg cursor-pointer'>
                   <img className='w-full h-52 object-cover rounded-xl' src={item.image} alt="" />
                   <p className='text-lg text-blue-900 text-center'>{item.name}</p>
-                  <p className='text-blue-900 text-center text-sm'>Size: {item.size}</p>
+                  <p className='text-blue-900 text-center text-sm'>Size: {item.size} {item.type === 'Marble' ? 'inch' : ''}</p>
                 </div>
               ))}
             </div>

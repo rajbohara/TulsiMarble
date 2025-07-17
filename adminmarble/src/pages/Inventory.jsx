@@ -14,13 +14,13 @@ function Inventory() {
   const [image, setImage] = useState(false);
   const [category, setCategory] = useState('');
   const [patti, setPatti] = useState([]);
-  const [type, setType] = useState('Decorations');
+  const [type, setType] = useState('Marble');
   const [expandedCategories, setExpandedCategories] = useState({});
   const backendURL = process.env.REACT_APP_BACKEND_URL;
 
   const categoryOptionsByType = {
     Marble: ['Pink', 'Green', 'White', 'P-White', 'S-White', 'Multi-Color'],
-    Decorations: ['Rangoli', 'Welcome', 'Border Strips', 'Single-Color', 'Tilak'],
+    Decorations: ['Rangoli', 'Welcome', 'Border Strips', 'Single-Color', 'Tilak', 'Design Patti'],
   };
 
   const fetchInventory = async () => {
