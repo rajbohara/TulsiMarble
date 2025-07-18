@@ -41,7 +41,13 @@ app.get('/', (req, res) => {
 app.use('/admin',adminRouter);
 
 
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
+});
 
+app.head('/ping', (req, res) => {
+  res.status(200).send('pong');
+});
 
 app.get('/additionalinfo/:_id', async (req, res) => {
   console.log("additional getting route hit ");
@@ -137,9 +143,6 @@ app.post('/clerk', async (req, res) => {
 });
 
 
-app.get('/ping', (req, res) => {
-  res.status(200).send('pong');
-});
 
 
 app.listen(port, () => console.log("server started", port));
