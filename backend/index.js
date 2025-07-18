@@ -35,19 +35,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
+// In your app.js / server.js, before any 404 middleware:
+app.head('/ping', (req, res) => {
+  res.status(200).end();
+});
+
+
 app.get('/', (req, res) => {
     res.send('API WORKING');
 });
 app.use('/admin',adminRouter);
 
 
-app.get('/ping', (req, res) => {
-  res.status(200).send('pong');
-});
 
-app.head('/ping', (req, res) => {
-  res.status(200).send('pong');
-});
+
+
 
 app.get('/additionalinfo/:_id', async (req, res) => {
   console.log("additional getting route hit ");
