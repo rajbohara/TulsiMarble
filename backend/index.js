@@ -137,6 +137,11 @@ app.post('/clerk', async (req, res) => {
 });
 
 
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
+});
+
+
 app.listen(port, () => console.log("server started", port));
 
 app.use((err, req, res, next) => {
